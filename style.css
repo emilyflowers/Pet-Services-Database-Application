@@ -1,0 +1,46 @@
+.header {
+    text-align: center;
+}
+
+.main-body { 
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: flex-start; 
+    min-height: 100vh;       /* Takes up 100% of the viewport height */
+    margin: 0;               /* Removes default browser margins */
+    background-color: #f5f5f5;
+}
+
+.home-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spacing between vertical blocks */
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+
+.home-login-buttons {
+    display: flex;
+    flex-direction: row; /* Arranges children horizontally */
+    gap: 10px; /* Spacing between the buttons */
+    width: 100%;
+}
+
+.home-login-button {
+    flex: 1; 
+    padding: 25px;
+}
+
+.add-user {
+    text-align: center;
+}
+
+.emp-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spacing between vertical blocks */
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
