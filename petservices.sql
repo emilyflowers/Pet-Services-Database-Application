@@ -1,4 +1,10 @@
 --
+-- Database petservices_db creation
+--
+
+CREATE DATABASE petservices_db;
+
+--
 -- Table structure for employee
 --
 
