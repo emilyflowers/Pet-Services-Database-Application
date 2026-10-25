@@ -13,21 +13,23 @@
         <div class="main-body">
         <div class="home-main-content"> 
         <h3>Please complete all fields:</h3>
-        <form>
+        <form action="addpet.php" method="POST">
             <label for="pet-name">Pet Name:</label>
             <input type="text" id="pet-name" name="pet-name" required><br><br>
-            <label for="client-name">Pet Parent Name:</label>
-            <input type="client-name" id="client-name" name="client-name" required><br><br>
+            <label for="client-name">Pet Parent (oid #):</label>
+            <input type="text" id="client-name" name="client-name" required><br><br>
             <label for="species">Species:</label>
-            <input type="species" id="species" name="species" required><br><br>
+            <input type="text" id="species" name="species" required><br><br>
             <label for="dob">Date of Birth:</label>
-            <input type="dob" id="dob" name="dob" required><br><br>
-            <button type="submit">Add User</button>
+            <input type="date" id="dob" name="dob" required><br><br>
+            <label for="is-fixed">Is the pet fixed (spayed/neutered)?</label>
+            <input type="checkbox" id="is-fixed" name="is-fixed" value="1"><br><br>
+            <label for="is-vaccinated">Is the pet up-to-date on their vaccinations?</label>
+            <input type="checkbox" id="is-vaccinated" name="is-vaccinated" value="1"><br><br>
+            <button type="submit">Add Pet</button>
         </form>
         </div>
     </div>
-        <!-- Link external JavaScript here -->
-    <script src="script.js"></script>
 </body>
 <footer>
 </footer>
