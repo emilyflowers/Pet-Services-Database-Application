@@ -12,8 +12,14 @@
     <div class="main-body">
     <div class="home-main-content">
         <div class="home-login-buttons">
-                <button class="home-login-button">Employee</button>
-                <button class="home-login-button">Pet Parent</button>
+            <form action="login.php" method="POST">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required><br><br>
+                <label for="password">Password:</label>
+                <input type="text" id="password" name="password" required><br><br>
+                <button type="reset">Clear</button>
+                <button type="submit">Login</button>
+            </form>
         </div>
         <h2 class="add-user"><a href="adduser.html">New User</a></h2>
     </div>
