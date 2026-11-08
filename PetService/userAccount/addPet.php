@@ -1,30 +1,44 @@
 <?php
 session_start();
 
-$con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
+// Must be logged in
+if (empty($_SESSION['OId'])) {
+    header("Location: ../userAccount/login.php");
+    exit;
+}
+
+$con = mysqli_connect("localhost", "root", "", "petservices_db");
+if (!$con) {
+    die("DB error: " . mysqli_connect_error());
+}
+mysqli_set_charset($con, "utf8mb4");
+
+$error = '';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $IsVaccinated = $_POST['IsVaccinated'] ?? '';
-    $Name = trim($_POST['Name']  ?? '');
-    $Birthdate = $_POST['Birthdate'] ?? '';
-    $Species = $_POST['Species'] ?? '';
-    $IsFixed = $_POST['IsFixed'] ?? '';
-    $LastVetApp = $_POST['LastVetApp'] ?? '';
+    $Name         = trim($_POST['Name']        ?? '');
+    $Birthdate    = $_POST['Birthdate']        ?? '';
+    $Species      = trim($_POST['Species']     ?? '');
+    $IsFixed      = $_POST['IsFixed']          ?? '0';
+    $LastVetApp   = $_POST['LastVetApp']       ?? '';
+    // Checkbox: unchecked = not sent at all → default 0
+    $IsVaccinated = isset($_POST['IsVaccinated']) ? 1 : 0;
 
-    if ($Name === '' || $Birthdate === '' || $Species === '' || $IsFixed === '' || $LastVetApp === '') {
-        $error = "Please fill out required fields.";
+    if ($Name === '' || $Birthdate === '' || $Species === '' || $LastVetApp === '') {
+        $error = "Please fill out all required fields.";
     } else {
-        $stmt = mysqli_prepare($con, "INSERT INTO pet (IsVaccinated, Name, Birthdate, Species, IsFixed, LastVetApp, LastVisit)
-            VALUES (?, ?, ?, ?, ?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, "isssiss", $IsVaccinated, $Name, $Birthdate, $Species, 
-            $IsFixed, $LastVetApp);
+        $stmt = mysqli_prepare($con,
+            "INSERT INTO pet (OId, IsVaccinated, Name, Birthdate, Species, IsFixed, LastVetApp, LastVisit)
+             VALUES (?, ?, ?, ?, ?, ?, ?, NULL)");
+        mysqli_stmt_bind_param($stmt, "iisssis",
+            $_SESSION['OId'], $IsVaccinated, $Name, $Birthdate, $Species, $IsFixed, $LastVetApp);
 
         if (mysqli_stmt_execute($stmt)) {
             $_SESSION['PId'] = mysqli_insert_id($con);
-            header("Location: ../pages/appointment.php");
+            header("Location: ownerHome.php");
             exit;
         } else {
-            error_log("Insert failed: " . mysqli_error($con));
+            error_log("Pet insert failed: " . mysqli_error($con));
             $error = "Registration failed. Please try again.";
         }
     }
@@ -33,42 +47,85 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Add Pet</title>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../pages/style.css"> 
+    <h1 class="header">Add Pet</h1>  
 </head>
 <body>
-    <div class="container">
-        <div class="title">Registration</div>
+    <div class='main-content'>
+    
+        <div>
+            <h1>Register a Pet</h1>
+        </div>
+
+        <?php if ($error): ?>
+            <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
+
         <div class="content">
             <form action="" method="POST">
                 <div class="pet-details">
 
-                    <label for="IsVaccinated">Has your pet been vaccinated in the last year?</label>
-                    <input type="checkbox" name="IsVaccinated" id="IsVaccinated" value="1"><br>
+                    <div class="input-box">
+                        <span class="details">Pet's Name: </span>
+                        <input type="text" placeholder="Name"
+                               name="Name" id="Name" required>
+                    </div>
 
                     <div class="input-box">
-                        <span class="details">Email</span>
-                        <input type="email" placeholder="Enter your email" name="Email" required>
+                        <span class="details">Birthdate: </span>
+                        <input type="date" name="Birthdate" id="Birthdate" required>
                     </div>
+
                     <div class="input-box">
-                        <span class="details">Password</span>
-                        <input type="password" placeholder="Enter your password" name="Password" required>
+                        <span class="details">Species: </span>
+                        <select name="Species" id="Species" required>
+                            <option value="">-- Select --</option>
+                            <option value="Dog">Dog</option>
+                            <option value="Cat">Cat</option>
+                            <option value="Bird">Bird</option>
+                            <option value="Rabbit">Rabbit</option>
+                            <option value="Reptile">Reptile</option>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
+
                     <div class="input-box">
-                        <span class="details">Phone Number</span>
-                        <input type="tel" placeholder="Enter phone number" name="PhoneNumber" required>
+                        <span class="details">Is your pet fixed (neutered/spayed)?</span>
+                        <label>
+                            <input type="radio" name="IsFixed" value="1" required> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="IsFixed" value="0"> No
+                        </label>
                     </div>
+
                     <div class="input-box">
-                        <span class="details">Address</span>
-                        <input type="text" placeholder="Enter Home Address" name="Address" required>
+                        <span class="details">Date of last vet appointment: </span>
+                        <input type="date" name="LastVetApp" id="LastVetApp" required>
                     </div>
+
+                    <div class="input-box">
+                        <label for="IsVaccinated">
+                            Has your pet been vaccinated in the last year?
+                        </label>
+                        <input type="checkbox" name="IsVaccinated" id="IsVaccinated" value="1">
+                    </div>
+
                 </div>
-                <div class="button">
-                    <input type="submit" value="Register">
-                    <p class="login"><strong>Already have an account?</strong>
-                        <a href="../userAccount/login.php">Login.</a></p>
+
+                <div class="button-container">
+                    <button type="submit" name="action" value="registerpet" class="user-action-button">Add Pet</button>   
                 </div>
             </form>
+
+            <div class="button-container">
+        <form method="GET" action="../userAccount/ownerHome.php" style="display:inline;">
+                <button type="submit" name="action" value="home" class="login-menu-button">Return to Home</button>
+        </form>
+    </div>
         </div>
     </div>
 </body>
+</html>
