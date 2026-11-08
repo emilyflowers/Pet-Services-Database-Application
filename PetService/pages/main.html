@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <!-- Link external CSS here -->
+    <link rel="stylesheet" href="style.css"> 
+    <h1 class="header">Login</h1>  
+</head>
+<body>
+    <div class="main-content">
+        <div class="button-container">
+            <!-- Button for Employees to login -->
+            <form method="GET" action="../employeeAccount/login.php" style="display:inline;">
+                <button type="submit" name="action" value="login" class="login-menu-button">Employee</button>
+            </form>
+
+            <!-- Button for Pet Owners to login -->
+            <form method="GET" action="../userAccount/login.php" style="display:inline;">
+                <button type="submit" name="action" value="login" class="login-menu-button">Pet Owner</button>
+            </form>
+        </div>
+         
+        <h3 class="add-user"><a href="../userAccount/register.php">New User</a></h3>
+    </div>
+
+        <!-- Link external JavaScript here -->
+    <script src="script.js"></script>
+</body>
+<footer>
+</footer>
+</html>

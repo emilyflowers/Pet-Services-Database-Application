@@ -1,35 +1,36 @@
+<?php
+session_start();
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $con = mysqli_connect("localhost", "root", "", "petservices_db");
+    $stmt = mysqli_prepare($con, "SELECT OId, Password FROM owner WHERE Email = ?");
+    mysqli_stmt_bind_param($stmt, "s", $_POST['Email']);
+    mysqli_stmt_execute($stmt);
+    $row = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+
+    if ($row && $_POST['Password'] === $row['Password']) {
+        $_SESSION['OId'] = $row['OId'];
+        header("Location: ownerHome.php");
+        exit;
+    }
+    $error = "Invalid credentials";
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - Pet Parent</title>
+    <link rel="stylesheet" href="../pages/style.css"> 
+    <h1 class="header">Pet Services</h1>  
 </head>
-
 <body>
-   <?php
-    session_start();
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
-        $stmt = mysqli_prepare($con, "SELECT OId, Password FROM owner WHERE Email = ?");
-        mysqli_stmt_bind_param($stmt, "s", $_POST['Email']);
-        mysqli_stmt_execute($stmt);
-        $row = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
-
-        if ($row && $_POST['Password'] === $row['Password']) {
-            $_SESSION['OId'] = $row['OId'];
-            header("Location: ../userAccount/selectPet.php");
-            exit;
-        }
-        echo "Invalid credentials";
-    }
-    ?>
-    <div class="container">
-        <div class="title">Login</div>
+    <div class="main-content">
+        <h1>Login</h1>
         <div class="content">
+            <p style="color:red"><?php echo $error; ?></p>
             <form action="" method="POST">
                 <div class="user-details">
                     <div class="input-box">
@@ -41,15 +42,15 @@
                         <input type="password" placeholder="Enter your password" id="Password" name="Password" required>
                     </div>
                 </div>
-                <div class="button">
-                    <input type="submit" value="Login">
+              
+                <div class="button-container">
+                    <button type="submit" name="action" value="login" class="login-menu-button">Login</button>   
                 </div>
-                <p class="x"><strong>Did not register?<li><a href="../userAccount/register.php">Register</strong></a></li>
+
+                <p class="x"><strong>Did not register?</strong> <a href="register.php">Register</a></p>
+
             </form>
         </div>
     </div>
-
-
 </body>
-
 </html>

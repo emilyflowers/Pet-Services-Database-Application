@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
+$con = mysqli_connect("localhost", "root", "", "petservices_db");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
@@ -36,40 +36,46 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration</title>
+    <title>Registration - Pet Parent</title>
+    <link rel="stylesheet" href="../pages/style.css"> 
+    <h1 class="header">Pet Services</h1>  
 </head>
 <body>
-    <div class="container">
-        <div class="title">Registration</div>
+    <div class="main-content">
+        <h1>User Registration</h1>
         <div class="content">
             <form action="" method="POST">
+                
+
                 <div class="user-details">
                     <div class="input-box">
-                        <span class="details">Username</span>
-                        <input type="text" placeholder="Enter your username" name="Username" required>
+                        <span class="details">First and Last Name:</span>
+                        <input type="text" placeholder="Enter your name" name="Username" required>
                     </div>
                     <div class="input-box">
-                        <span class="details">Email</span>
+                        <span class="details">Email:</span>
                         <input type="email" placeholder="Enter your email" name="Email" required>
                     </div>
                     <div class="input-box">
-                        <span class="details">Password</span>
+                        <span class="details">Password:</span>
                         <input type="password" placeholder="Enter your password" name="Password" required>
                     </div>
                     <div class="input-box">
-                        <span class="details">Phone Number</span>
+                        <span class="details">Phone Number:</span>
                         <input type="tel" placeholder="Enter phone number" name="PhoneNumber" required>
                     </div>
                     <div class="input-box">
-                        <span class="details">Address</span>
+                        <span class="details">Address:</span>
                         <input type="text" placeholder="Enter Home Address" name="Address" required>
                     </div>
                 </div>
-                <div class="button">
-                    <input type="submit" value="Register">
-                    <p class="login"><strong>Already have an account?</strong>
-                        <a href="../userAccount/login.php">Login.</a></p>
+                <div class="button-container">
+              
+                    <button type="submit" name="action" value="register" class="login-menu-button">Register</button> 
+                    
                 </div>
+                <p class="login"><strong>Already have an account?</strong>
+                        <a href="../userAccount/login.php">Login</a></p>
             </form>
         </div>
     </div>
