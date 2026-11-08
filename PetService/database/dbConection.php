@@ -1,0 +1,6 @@
+<?php
+	$HOST_NAME = "localhost";
+	$DATABASE_NAME = "petservices_db";
+	$USERNAME = "Markward";
+	$PASSWORD = "Jacob!2";
+?>
