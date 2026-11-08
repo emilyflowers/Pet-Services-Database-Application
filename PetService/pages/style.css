@@ -1,0 +1,162 @@
+/*Colors: 
+    Dark teal: #315d5c
+    Lime: #bbd277
+    Orange: #f8a030
+    Blue: #B4DFE6
+    Off White: #FFF5DF
+*/
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: #B4DFE6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+.header {
+    text-align: center;
+    background-color: #315d5c;
+    color: #FFF5DF;
+    margin: 0;
+    padding: 25px;
+}
+
+.main-body { 
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: flex-start; 
+    min-height: 100vh;       /* Takes up 100% of the viewport height */
+    margin: 0;               /* Removes default browser margins */
+    background-color: #B59B80;
+}
+
+.home-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spacing between vertical blocks */
+    width: 300px;
+    padding: 20px;
+    background-color: #F7ECD8;
+    margin-top: 50px;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row; /* Arranges children horizontally */
+    justify-content: center;
+    gap: 15px; /* Spacing between the buttons */
+    width: 100%;
+    color: #315d5c;
+}
+
+button {
+    background-color: #315d5c;
+    font-weight: bold;
+}
+
+.button-container button {
+    color: #FFF5DF;
+    padding: 10px;
+}
+
+.user-action-button {
+   background-color: #f8a030;
+   color: black;
+}
+
+.user-action-button button {
+   color: #315d5c;
+   padding: 10px;
+}
+
+.add-user {
+    text-align: center;
+}
+
+.emp-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spacing between vertical blocks */
+    width: 300px;
+    padding: 20px;
+}
+
+label {
+    color: black;
+    font-weight: bold;
+}
+
+span {
+    font-weight: bold;
+}
+
+p {
+    font-weight: bold;
+}
+
+form {
+    margin-bottom: 30px;
+}
+
+
+.main-content {
+    background-color: #F7ECD8;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+    padding: 20px;
+    margin: 50px 0px 50px 0px;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 12px;
+}
+
+table {
+    margin-bottom: 10px;
+}
+
+.input-box {
+    margin: 10px;
+}
+
+.pet-details {
+    margin-bottom: 50px;
+}
+
+.employee-options {
+    display: flex;
+    flex-direction: row; /* Arranges children horizontally */
+    justify-content: center;
+    gap: 15px; /* Spacing between the buttons */
+    width: 100%;
+    color: #315d5c;
+}
+
+.employee-options button {
+    width: 100%;
+    background-color: #f8a030;
+}
+
+.emp-menu-button {
+    padding: 10px;
+}
+
+add-owner-form {
+    display: flex;
+    flex-direction: column; /* Arranges children horizontally */
+    justify-content: center;
+    gap: 15px; /* Spacing between the buttons */
+    width: 100%;
+}
+
+.input-section {
+    margin: 10px;
+}
+
