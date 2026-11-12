@@ -41,13 +41,13 @@ function yn($v) { return $v ? 'Yes' : 'No'; }
     </div>
     <div class="main-content">
 <?php if ($action === 'appointments') {
-    $result = mysqli_query($con, "SELECT * FROM appointment ORDER BY StartDate DESC"); ?>
+    $result = mysqli_query($con, "SELECT a.AId, p.Name AS Pet, e.Name AS Employee, a.Grooming, a.Boarding, a.Training, a.StartDate, a.EndDate FROM appointment a INNER JOIN pet p ON a.PId = p.PId INNER JOIN employee e ON a.EId = e.EId ORDER BY StartDate DESC"); ?>
     <h2>Appointments</h2>
     <table border="1">
-        <tr><th>AId</th><th>PId</th><th>EId</th><th>Grooming</th><th>Boarding</th><th>Training</th><th>Start</th><th>End</th><th>Actions</th></tr>
+        <tr><th>AId</th><th>Pet</th><th>Employee</th><th>Grooming</th><th>Boarding</th><th>Training</th><th>Start</th><th>End</th><th>Actions</th></tr>
         <?php while ($d = mysqli_fetch_assoc($result)) { ?>
         <tr>
-            <td><?php echo $d['AId']; ?></td><td><?php echo $d['PId']; ?></td><td><?php echo $d['EId']; ?></td>
+            <td><?php echo $d['AId']; ?></td><td><?php echo $d['Pet']; ?></td><td><?php echo $d['Employee']; ?></td>
             <td><?php echo yn($d['Grooming']); ?></td><td><?php echo yn($d['Boarding']); ?></td><td><?php echo yn($d['Training']); ?></td>
             <td><?php echo e($d['StartDate']); ?></td><td><?php echo e($d['EndDate']); ?></td>
             <td>
