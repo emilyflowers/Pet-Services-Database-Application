@@ -71,12 +71,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form method="POST">
         <h3>Services:</h3>
-        <label><input type="checkbox" name="Grooming"> Grooming</label><br>
-        <label><input type="checkbox" name="Boarding"> Boarding</label><br>
-        <label><input type="checkbox" name="Training"> Training</label><br><br>
+        <label><input type="checkbox" id="grooming" name="Grooming"> Grooming</label><br>
+        <label><input type="checkbox" id="boarding" name="Boarding"> Boarding</label><br>
+        <label><input type="checkbox" id="training" name="Training"> Training</label><br><br>
 
-        <label>Start date: <input type="date" name="StartDate" min="<?php echo date('Y-m-d'); ?>" required></label><br><br>
-        <label>End date: <input type="date" name="EndDate" min="<?php echo date('Y-m-d'); ?>" required></label><br>
+        <label>Start date: <input type="date" id="start-date" name="StartDate" min="<?php echo date('Y-m-d'); ?>" required></label><br><br>
+        <label>End date: <input type="date" id="end-date" name="EndDate" min="<?php echo date('Y-m-d'); ?>" required></label><br>
        
         <div class="button-container">
            <button type="submit" name="action" value="bookappt" class="user-action-button">Book Appointment</button>   
@@ -85,6 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>
         <?php if ($success) { ?><p style="color:green"><?php echo $success; ?></p><?php } ?>
     </form>
+    <label id="cost-per-day">Cost Per Day: $0</label>
+    <label id="total-cost">Input start and end dates for total price</label>
     <div class="button-container">
         <form method="GET" action="../userAccount/ownerHome.php" style="display:inline;">
                 <button type="submit" name="action" value="home" class="login-menu-button">Return to Home</button>
@@ -92,4 +94,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
  </div>
 </body>
+<script>
+const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', updateLabel);
+});
+const dates = document.querySelectorAll('input[type="date"]');
+
+dates.forEach(date => {
+    date.addEventListener('change', updateLabel);
+});
+
+function updateLabel() {
+    let costPerDay = 0;
+
+    if (document.getElementById("grooming").checked) costPerDay += 50;
+    if (document.getElementById("boarding").checked) costPerDay += 65;
+    if (document.getElementById("training").checked) costPerDay += 45;
+
+    document.getElementById("cost-per-day").textContent = "Cost Per Day: $" + costPerDay;
+
+    if (!document.getElementById("start-date").value ||
+    !document.getElementById("end-date").value) {
+    	document.getElementById("total-cost").textContent = "Input start and end dates for total price";
+    } else {
+
+    	const start = new Date(document.getElementById("start-date").value);
+    	const end = new Date(document.getElementById("end-date").value);
+
+    	if (end < start) {
+    		document.getElementById("total-cost").textContent = "Invalid date range";
+    	} else {
+
+    		const difference = end - start;
+    		const days = difference / (1000 * 60 * 60 * 24) + 1;
+
+    		document.getElementById("total-cost").textContent = "Total Cost: $" + costPerDay * days;
+	}
+    }
+}
+</script>
 </html>
