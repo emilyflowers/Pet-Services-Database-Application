@@ -27,16 +27,29 @@ if (!$data) { die("Employee not found."); }
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Edit Employee</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Employee</title>
+    <link rel="stylesheet" href="../pages/style.css">
+    <h1 class="header">Pet Services</h1> 
+</head>
 <body>
+<div class="main-content">
 <h3>Update Employee #<?php echo $id; ?></h3>
 <form method="POST">
     <p>Name: <input type="text" name="Name" value="<?php echo htmlspecialchars($data['Name']); ?>" maxlength="50" required></p>
-    <p>New password: <input type="text" name="Password" placeholder="Leave blank to keep current"></p>
+    <p>New password: <input type="text" name="Password" placeholder="(Leave blank to keep current)"></p>
     <p><label><input type="checkbox" name="IsAdmin" <?php if ($data['IsAdmin']) echo 'checked'; ?> <?php if ($self) echo 'disabled'; ?>> Admin</label>
        <?php if ($self) echo "(you can't remove your own admin rights)"; ?></p>
-    <input type="submit" name="update" value="Update">
-    <a href="empHome.php?action=employees">Cancel</a>
+    
+
+    <div class="button-container">
+        <button type="submit" name="update" value="Update" class="user-action-button">Update Employee</button>
+    </div>
+    <div class="return-option">
+        <a href="empHome.php?action=employees">Cancel Changes</a>
+    </div>
 </form>
+</div>
 </body>
 </html>
