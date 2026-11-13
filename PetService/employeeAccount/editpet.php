@@ -31,8 +31,14 @@ $species = ['dog', 'cat', 'bird', 'rabbit', 'reptile', 'other'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Edit Pet</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Pet</title>
+    <link rel="stylesheet" href="../pages/style.css">
+    <h1 class="header">Pet Services</h1>  
+</head>
 <body>
+<div class = "main-content">
 <h3>Update Pet #<?php echo $id; ?></h3>
 <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>
 <form method="POST">
@@ -58,11 +64,17 @@ $species = ['dog', 'cat', 'bird', 'rabbit', 'reptile', 'other'];
         <label><input type="radio" name="IsFixed" value="1" <?php if ($data['IsFixed']) echo 'checked'; ?>> Yes</label>
         <label><input type="radio" name="IsFixed" value="0" <?php if (!$data['IsFixed']) echo 'checked'; ?>> No</label>
     </p>
-    <p><label><input type="checkbox" name="IsVaccinated" <?php if ($data['IsVaccinated']) echo 'checked'; ?>> Vaccinated</label></p>
+    <p><label>Vaccinated within the last year? <input type="checkbox" name="IsVaccinated" <?php if ($data['IsVaccinated']) echo 'checked'; ?>></label></p>
     <p>Last vet appointment: <input type="date" name="LastVetApp" value="<?php echo $data['LastVetApp']; ?>"></p>
     <p>Last visit: <input type="date" name="LastVisit" value="<?php echo $data['LastVisit']; ?>"></p>
-    <input type="submit" name="update" value="Update">
-    <a href="empHome.php?action=pets">Cancel</a>
+
+    <div class="button-container">
+        <button type="submit" name="update" value="Update" class="user-action-button">Update Pet</button>
+    </div>
+    <div class="return-option">
+        <a href="empHome.php?action=pets">Cancel Changes</a>
+    </div>
 </form>
+</div>
 </body>
 </html>

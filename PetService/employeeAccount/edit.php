@@ -29,26 +29,38 @@ if (!$data) { die("Appointment not found."); }
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Edit Appointment</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Appointment</title>
+    <link rel="stylesheet" href="../pages/style.css">
+    <h1 class="header">Pet Services</h1>  
+</head>
 <body>
-<h3>Update Appointment #<?php echo $id; ?></h3>
-<form method="POST">
-    <?php if ($isAdmin) { ?>
-        <p><label>Employee Id: <input type="number" name="EId" value="<?php echo $data['EId']; ?>" required></label></p>
-    <?php } else { ?>
-        <p>Assigned employee: #<?php echo $data['EId']; ?> (only an admin can change this)</p>
-    <?php } ?>
+    <div class="main-content">
+        <h3>Update Appointment #<?php echo $id; ?></h3>
+        <form method="POST">
+        <?php if ($isAdmin) { ?>
+            <p><label>Employee Id: <input type="number" name="EId" value="<?php echo $data['EId']; ?>" required></label></p>
+         <?php } else { ?>
+            <p>Assigned employee: #<?php echo $data['EId']; ?> (only an admin can change this)</p>
+        <?php } ?>
     <p>
-        <label><input type="checkbox" name="Grooming" <?php if ($data['Grooming']) echo 'checked'; ?>> Grooming</label>
-        <label><input type="checkbox" name="Boarding" <?php if ($data['Boarding']) echo 'checked'; ?>> Boarding</label>
-        <label><input type="checkbox" name="Training" <?php if ($data['Training']) echo 'checked'; ?>> Training</label>
+        <label><input type="checkbox" name="Grooming" <?php if ($data['Grooming']) echo 'checked'; ?>> Grooming</label><br>
+        <label><input type="checkbox" name="Boarding" <?php if ($data['Boarding']) echo 'checked'; ?>> Boarding</label><br>
+        <label><input type="checkbox" name="Training" <?php if ($data['Training']) echo 'checked'; ?>> Training</label><br>
     </p>
     <p>
-        <label>Start: <input type="date" name="StartDate" value="<?php echo substr($data['StartDate'], 0, 10); ?>" required></label>
+        <label>Start: <input type="date" name="StartDate" value="<?php echo substr($data['StartDate'], 0, 10); ?>" required></label><br>
         <label>End: <input type="date" name="EndDate" value="<?php echo substr($data['EndDate'], 0, 10); ?>" required></label>
     </p>
-    <input type="submit" name="update" value="Update">
-    <a href="empHome.php?action=appointments">Cancel</a>
+  
+    <div class="button-container">
+        <button type="submit" name="update" value="Update" class="user-action-button">Update Appointment</button>
+    </div>
+    <div class="return-option"> 
+     <a href="empHome.php?action=appointments">Cancel Changes</a>
+    </div>
 </form>
+</div>
 </body>
 </html>
