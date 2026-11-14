@@ -6,6 +6,8 @@
     Off White: #FFF5DF
 */
 
+
+
 html, body {
     margin: 0;
     padding: 0;
@@ -116,6 +118,7 @@ form {
     margin-left: auto;
     margin-right: auto;
     border-radius: 12px;
+    max-width: 80%;
 }
 
 table {
@@ -164,6 +167,13 @@ add-owner-form {
     display: block;
     text-align: center;
     margin-top: 60px;
+}
+
+.review-top-content {
+    max-width: 75%;
+    background-color: #bbd277;
+    padding: 20px;
+    border-radius: 12px;
 }
 
 
