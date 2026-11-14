@@ -1,14 +1,15 @@
 <?php
-session_start();
-if (!isset($_SESSION['Eid'])) { header("Location: login.php"); exit; }
-$isAdmin = ($_SESSION['IsAdmin'] ?? 0) == 1;
-$action = $_GET['action'] ?? 'appointments';
-if ($action === 'employees' && !$isAdmin) { $action = 'appointments'; }  // admin only
-$con = mysqli_connect("localhost", "root", "", "petservices_db");
+    session_start();
+    if (!isset($_SESSION['Eid'])) { header("Location: login.php"); exit; }
+    $isAdmin = ($_SESSION['IsAdmin'] ?? 0) == 1;
+    $action = $_GET['action'] ?? 'appointments';
+    if ($action === 'employees' && !$isAdmin) { $action = 'appointments'; }  // admin only
+    $con = mysqli_connect("localhost", "root", "", "petservices_db");
 
-function e($v) { return htmlspecialchars((string)$v); }
-function yn($v) { return $v ? 'Yes' : 'No'; }
+    function e($v) { return htmlspecialchars((string)$v); }
+    function yn($v) { return $v ? 'Yes' : 'No'; }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,25 +99,8 @@ function yn($v) { return $v ? 'Yes' : 'No'; }
 <?php } ?>
 
 <?php if ($action === 'reviews') {
-    $avg = mysqli_fetch_assoc(mysqli_query($con, "SELECT AVG(Rating) AS AvgRating FROM review WHERE Date >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 MONTH)"));
-    $averageRating = $avg['AvgRating'] ? number_format((float)$avg['AvgRating'], 1) : 'N/A';
-    $reviews = mysqli_query($con, "SELECT AId, Rating, Date, Body FROM review WHERE Date >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 MONTH) ORDER BY Date DESC"); ?>
-    <h2>Review Dashboard</h2>
-    <h3>Average Rating Over Past 3 Months: <strong><?php echo $averageRating; ?> / 5</strong></h3>
-    <?php if (mysqli_num_rows($reviews) > 0) { ?>
-        <h3>Reviews From Past 3 Months:</h3>
-        <ul>
-        <?php while ($r = mysqli_fetch_assoc($reviews)) { ?>
-            <li><strong>Rating: <?php echo $r['Rating']; ?>/5</strong> - <?php echo date("F j, Y", strtotime($r['Date'])); ?>
-                (appointment #<?php echo $r['AId']; ?>)
-                <?php if ($isAdmin) { ?> <a href="delete.php?type=review&id=<?php echo $r['AId']; ?>" onclick="return confirm('Delete this review?')">Delete</a><?php } ?>
-                <br><?php echo e($r['Body']); ?></li>
-        <?php } ?>
-        </ul>
-    <?php } else { ?>
-        <p>No reviews found from the past 3 months.</p>
-    <?php } ?>
-<?php } ?>
+    include 'reviews.php';
+} ?>
 
 <?php if ($action === 'employees' && $isAdmin) {
     $result = mysqli_query($con, "SELECT EId, Name, IsAdmin FROM employee ORDER BY EId"); ?>
