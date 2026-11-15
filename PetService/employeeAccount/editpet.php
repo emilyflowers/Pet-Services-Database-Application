@@ -68,8 +68,8 @@ $species = ['dog', 'cat', 'bird', 'rabbit', 'reptile', 'other'];
     <p>Last vet appointment: <input type="date" name="LastVetApp" value="<?php echo $data['LastVetApp']; ?>"></p>
     <p>Last visit: <input type="date" name="LastVisit" value="<?php echo $data['LastVisit']; ?>"></p>
 
-    <div class="button-container">
-        <button type="submit" name="update" value="Update" class="user-action-button">Update Pet</button>
+    <div class="form-submit-button">
+        <button type="submit" name="update" value="Update" class="">Update Pet</button>
     </div>
     <div class="return-option">
         <a href="empHome.php?action=pets">Cancel Changes</a>

@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p>Password: <input type="text" name="Password" placeholder="" required></p>
         <p>Admin? <label><input type="checkbox" name="IsAdmin"></label></p>
         
-        <div class="button-container">
-            <button type="submit" name="action" value="Add Employee" class="user-action-button">Add Employee</button>
+        <div class="form-submit-button">
+            <button type="submit" name="action" value="Add Employee" class="">Add Employee</button>
         </div>
     </form>
 

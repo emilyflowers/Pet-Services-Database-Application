@@ -76,8 +76,8 @@ $employees = mysqli_query($con, "SELECT EId, Name FROM employee ORDER BY Name");
             <p><label>End Date: <input type="date" id="end-date" name="EndDate" required></label></p>
         </p>
         
-        <div class="button-container">
-            <button type="submit" name="action" value="Schedule" class="user-action-button">Schedule Appointment</button>
+        <div class="form-submit-button">
+            <button type="submit" name="action" value="Schedule" class="">Schedule Appointment</button>
         </div>
     </form>
     <label id="cost-per-day">Cost Per Day: $0</label>

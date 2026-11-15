@@ -68,8 +68,8 @@ $owners = mysqli_query($con, "SELECT OId, Name, Email FROM owner ORDER BY Name")
         <p>Last Vet Appointment (optional): <input type="date" name="LastVetApp"></p>
         <p>Vaccinated in the last year?<label><input type="checkbox" name="IsVaccinated"></label></p>
 
-        <div class="button-container">
-            <button type="submit" name="action" value="Add Pet" class="user-action-button">Add Pet</button>
+        <div class="form-submit-button">
+            <button type="submit" name="action" value="Add Pet" class="">Add Pet</button>
         </div>
     </form>
     
