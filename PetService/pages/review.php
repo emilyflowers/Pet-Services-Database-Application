@@ -77,8 +77,8 @@ $count = mysqli_num_rows($appts);
                 </select>
             </p>
             <p><textarea name="Body" rows="5" cols="50" placeholder="Tell us about your experience (optional)"></textarea></p>
-            <div class="button-container">
-                <button type="submit" name="action" value="Submit Review" class="user-action-button">Submit Review</button>
+            <div class="form-submit-button">
+                <button type="submit" name="action" value="Submit Review" class="">Submit Review</button>
             </div>
         </form>
     <?php } ?>
