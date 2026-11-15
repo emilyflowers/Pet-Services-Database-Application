@@ -41,14 +41,46 @@
         </div>
     </div>
     <div class="main-content">
+
 <?php if ($action === 'appointments') {
-    $result = mysqli_query($con, "SELECT a.AId, p.Name AS Pet, e.Name AS Employee, a.Grooming, a.Boarding, a.Training, a.StartDate, a.EndDate FROM appointment a INNER JOIN pet p ON a.PId = p.PId INNER JOIN employee e ON a.EId = e.EId ORDER BY StartDate DESC"); ?>
+    $search = trim($_GET['search'] ?? '');
+    $sql = "SELECT a.AId, p.Name AS Pet, o.Name AS Owner, e.Name AS Employee, a.Grooming, a.Boarding, a.Training, DATE(a.StartDate) AS StartDate, DATE(a.EndDate) AS EndDate
+            FROM appointment a
+            INNER JOIN pet p ON a.PId = p.PId
+            INNER JOIN owner o ON p.OId = o.OId
+            INNER JOIN employee e ON a.EId = e.EId";
+
+    if ($search !== '') {
+        $sql .= " WHERE p.Name LIKE ? OR o.Name LIKE ? OR e.Name LIKE ?";
+    }
+    $sql .= " ORDER BY a.StartDate DESC";
+
+    $stmt = mysqli_prepare($con, $sql);
+    if ($search !== '') {
+        $like = "%{$search}%";
+        mysqli_stmt_bind_param($stmt, "sss", $like, $like, $like);
+    }
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+?>
     <h2>Appointments</h2>
+    <form method="GET" action="empHome.php" style="margin-bottom: 12px;">
+        <input type="hidden" name="action" value="appointments">
+        <input type="text" name="search" placeholder="Search by pet, owner, or employee" value="<?php echo e($search); ?>">
+        <button type="submit" class="search-button">Search</button>
+        <?php if ($search !== '') { ?>
+            <a href="empHome.php?action=appointments">Clear</a>
+        <?php } ?>
+    </form>
+
     <table border="1">
-        <tr><th>AId</th><th>Pet</th><th>Employee</th><th>Grooming</th><th>Boarding</th><th>Training</th><th>Start</th><th>End</th><th>Actions</th></tr>
+        <tr><th>Pet</th><th>Owner</th><th>Employee</th><th>Grooming</th><th>Boarding</th><th>Training</th><th>Start</th><th>End</th><th>Actions</th></tr>
+        <?php if (mysqli_num_rows($result) === 0) { ?>
+            <tr><td colspan="8">No matching appointments found.</td></tr>
+        <?php } ?>
         <?php while ($d = mysqli_fetch_assoc($result)) { ?>
         <tr>
-            <td><?php echo $d['AId']; ?></td><td><?php echo $d['Pet']; ?></td><td><?php echo $d['Employee']; ?></td>
+            <td><?php echo e($d['Pet']); ?></td><td><?php echo e($d['Owner']); ?></td><td><?php echo e($d['Employee']); ?></td>
             <td><?php echo yn($d['Grooming']); ?></td><td><?php echo yn($d['Boarding']); ?></td><td><?php echo yn($d['Training']); ?></td>
             <td><?php echo e($d['StartDate']); ?></td><td><?php echo e($d['EndDate']); ?></td>
             <td>
@@ -61,13 +93,42 @@
 <?php } ?>
 
 <?php if ($action === 'pets') {
-    $result = mysqli_query($con, "SELECT p.*, o.Name AS OwnerName FROM pet p JOIN owner o ON p.OId = o.OId ORDER BY p.Name"); ?>
+    $search = trim($_GET['search'] ?? '');
+    $sql = "SELECT p.*, o.Name AS OwnerName
+            FROM pet p
+            JOIN owner o ON p.OId = o.OId";
+
+    if ($search !== '') {
+        $sql .= " WHERE p.Name LIKE ? OR o.Name LIKE ?";
+    }
+    $sql .= " ORDER BY p.Name";
+
+    $stmt = mysqli_prepare($con, $sql);
+    if ($search !== '') {
+        $like = "%{$search}%";
+        mysqli_stmt_bind_param($stmt, "ss", $like, $like);
+    }
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+?>
     <h2>Pets</h2>
+    <form method="GET" action="empHome.php" style="margin-bottom: 12px;">
+        <input type="hidden" name="action" value="pets">
+        <input type="text" name="search" class="search-bar" placeholder="Search by pet or owner" value="<?php echo e($search); ?>">
+        <button type="submit" class="search-button">Search</button>
+        <?php if ($search !== '') { ?>
+            <a href="empHome.php?action=pets">Clear</a>
+        <?php } ?>
+    </form>
+
     <table border="1">
-        <tr><th>PId</th><th>Name</th><th>Species</th><th>Owner</th><th>Birthdate</th><th>Fixed</th><th>Vaccinated</th><th>Last Vet</th><th>Last Visit</th><th>Actions</th></tr>
+        <tr><th>Name</th><th>Species</th><th>Owner</th><th>Birthdate</th><th>Fixed</th><th>Vaccinated</th><th>Last Vet</th><th>Last Visit</th><th>Actions</th></tr>
+        <?php if (mysqli_num_rows($result) === 0) { ?>
+            <tr><td colspan="9">No matching pets found.</td></tr>
+        <?php } ?>
         <?php while ($d = mysqli_fetch_assoc($result)) { ?>
         <tr>
-            <td><?php echo $d['PId']; ?></td><td><?php echo e($d['Name']); ?></td><td><?php echo e($d['Species']); ?></td>
+            <td><?php echo e($d['Name']); ?></td><td><?php echo e($d['Species']); ?></td>
             <td><?php echo e($d['OwnerName']); ?></td><td><?php echo e($d['Birthdate']); ?></td>
             <td><?php echo yn($d['IsFixed']); ?></td><td><?php echo yn($d['IsVaccinated']); ?></td>
             <td><?php echo e($d['LastVetApp']); ?></td><td><?php echo e($d['LastVisit']); ?></td>
@@ -81,13 +142,40 @@
 <?php } ?>
 
 <?php if ($action === 'owners') {
-    $result = mysqli_query($con, "SELECT OId, Name, Email, PhoneNumber, Address FROM owner ORDER BY Name"); ?>
+    $search = trim($_GET['search'] ?? '');
+    $sql = "SELECT OId, Name, Email, PhoneNumber, Address FROM owner";
+
+    if ($search !== '') {
+        $sql .= " WHERE Name LIKE ?";
+    }
+    $sql .= " ORDER BY Name";
+
+    $stmt = mysqli_prepare($con, $sql);
+    if ($search !== '') {
+        $like = "%{$search}%";
+        mysqli_stmt_bind_param($stmt, "s", $like);
+    }
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+?>
     <h2>Pet Parents</h2>
+    <form method="GET" action="empHome.php" style="margin-bottom: 12px;">
+        <input type="hidden" name="action" value="owners">
+        <input type="text" name="search" class="search-bar" placeholder="Search by owner name" value="<?php echo e($search); ?>">
+        <button type="submit" class="search-button">Search</button>
+        <?php if ($search !== '') { ?>
+            <a href="empHome.php?action=owners">Clear</a>
+        <?php } ?>
+    </form>
+
     <table border="1">
-        <tr><th>OId</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Actions</th></tr>
+        <tr><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Actions</th></tr>
+        <?php if (mysqli_num_rows($result) === 0) { ?>
+            <tr><td colspan="5">No matching pet parents found.</td></tr>
+        <?php } ?>
         <?php while ($d = mysqli_fetch_assoc($result)) { ?>
         <tr>
-            <td><?php echo $d['OId']; ?></td><td><?php echo e($d['Name']); ?></td><td><?php echo e($d['Email']); ?></td>
+            <td><?php echo e($d['Name']); ?></td><td><?php echo e($d['Email']); ?></td>
             <td><?php echo e($d['PhoneNumber']); ?></td><td><?php echo e($d['Address']); ?></td>
             <td>
                 <a href="editowner.php?OId=<?php echo $d['OId']; ?>">Edit</a>
