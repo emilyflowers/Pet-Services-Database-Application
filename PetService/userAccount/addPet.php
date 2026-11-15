@@ -115,8 +115,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 </div>
 
-                <div class="button-container">
-                    <button type="submit" name="action" value="registerpet" class="user-action-button">Add Pet</button>   
+                <div class="form-submit-button">
+                    <button type="submit" name="action" value="registerpet" class="">Add Pet</button>   
                 </div>
             </form>
 
