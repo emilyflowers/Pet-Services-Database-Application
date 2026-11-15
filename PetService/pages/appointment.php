@@ -76,10 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label><input type="checkbox" id="training" name="Training"> Training</label><br><br>
 
         <label>Start date: <input type="date" id="start-date" name="StartDate" min="<?php echo date('Y-m-d'); ?>" required></label><br><br>
-        <label>End date: <input type="date" id="end-date" name="EndDate" min="<?php echo date('Y-m-d'); ?>" required></label><br>
+        <label>End date: <input type="date" id="end-date" name="EndDate" min="<?php echo date('Y-m-d'); ?>" required></label><br><br>
        
-        <div class="button-container">
-           <button type="submit" name="action" value="bookappt" class="user-action-button">Book Appointment</button>   
+        <div class="form-submit-button">
+           <button type="submit" name="action" value="bookappt" class="">Book Appointment</button>   
         </div>
         
         <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>

@@ -60,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <span class="details">Address:</span>
             <input type="text" name="Address" placeholder="" required>
         </div>
-        <div class="button-container">
-            <button type="submit" name="action" value="Add Pet Parent" class="user-action-button">Add Pet Parent</button>
+        <div class="form-submit-button">
+            <button type="submit" name="action" value="Add Pet Parent" class="">Add Pet Parent</button>
         </div>
     </form>
     

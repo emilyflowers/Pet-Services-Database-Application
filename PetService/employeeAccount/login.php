@@ -29,7 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="main-content">
-    <h2>Employee Login</h2>
+    <h1>Employee Login</h1>
+    <div class="content">
     <p style="color:red"><?php echo $error; ?></p>
     <form method="POST">
         <div class="user-details">
@@ -48,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
     </form>
+    </div>
     </div>
 </body>
 </html>

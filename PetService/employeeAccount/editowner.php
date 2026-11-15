@@ -48,8 +48,8 @@ if (!$data) { die("Pet parent not found."); }
         <p>New password: <input type="text" name="Password" placeholder="(Leave blank to keep current)"></p>
     <?php } ?>
 
-    <div class="button-container">
-        <button type="submit" name="update" value="Update" class="user-action-button">Update Pet Parent</button>
+    <div class="form-submit-button">
+        <button type="submit" name="update" value="Update" class="">Update Pet Parent</button>
     </div>
     <div class="return-option">
         <a href="empHome.php?action=owners">Cancel Changes</a>
