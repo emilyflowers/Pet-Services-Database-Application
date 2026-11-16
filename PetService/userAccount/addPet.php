@@ -7,7 +7,7 @@ if (empty($_SESSION['OId'])) {
     exit;
 }
 
-$con = mysqli_connect("localhost", "root", "", "petservices_db");
+$con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
 if (!$con) {
     die("DB error: " . mysqli_connect_error());
 }
@@ -49,15 +49,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../pages/style.css"> 
-    <h1 class="header">Add Pet</h1>  
+    <title>Add Pet</title>
 </head>
 <body>
-    <div class='main-content'>
-    
-        <div>
-            <h1>Register a Pet</h1>
-        </div>
+    <div class="container">
+        <div class="title">Register a Pet</div>
 
         <?php if ($error): ?>
             <p style="color:red;"><?= htmlspecialchars($error) ?></p>
@@ -68,18 +64,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <div class="pet-details">
 
                     <div class="input-box">
-                        <span class="details">Pet's Name: </span>
-                        <input type="text" placeholder="Name"
+                        <span class="details">Pet Name</span>
+                        <input type="text" placeholder="Enter pet name"
                                name="Name" id="Name" required>
                     </div>
 
                     <div class="input-box">
-                        <span class="details">Birthdate: </span>
+                        <span class="details">Birthdate</span>
                         <input type="date" name="Birthdate" id="Birthdate" required>
                     </div>
 
                     <div class="input-box">
-                        <span class="details">Species: </span>
+                        <span class="details">Species</span>
                         <select name="Species" id="Species" required>
                             <option value="">-- Select --</option>
                             <option value="Dog">Dog</option>
@@ -102,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </div>
 
                     <div class="input-box">
-                        <span class="details">Date of last vet appointment: </span>
+                        <span class="details">Date of last vet appointment</span>
                         <input type="date" name="LastVetApp" id="LastVetApp" required>
                     </div>
 
@@ -115,16 +111,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 </div>
 
-                <div class="form-submit-button">
-                    <button type="submit" name="action" value="registerpet" class="">Add Pet</button>   
+                <div class="button">
+                    <input type="submit" value="Register Pet">
                 </div>
             </form>
-
-            <div class="button-container">
-        <form method="GET" action="../userAccount/ownerHome.php" style="display:inline;">
-                <button type="submit" name="action" value="home" class="login-menu-button">Return to Home</button>
-        </form>
-    </div>
         </div>
     </div>
 </body>

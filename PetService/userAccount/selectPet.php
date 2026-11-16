@@ -6,7 +6,7 @@ if (empty($_SESSION['OId'])) {
     exit;
 }
 
-$con = mysqli_connect("localhost", "root", "", "petservices_db");
+$con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
 $userOId = (int)$_SESSION['OId'];
 $result  = mysqli_query($con, "SELECT PId, Name FROM pet WHERE OId = $userOId");
 

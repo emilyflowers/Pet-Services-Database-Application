@@ -2,7 +2,7 @@
 session_start();
 if (!isset($_SESSION['Eid'])) { header("Location: login.php"); exit; }
 
-$con = mysqli_connect("localhost", "root", "", "petservices_db");
+$con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
 $error = '';
 $success = '';
 
@@ -31,13 +31,13 @@ $owners = mysqli_query($con, "SELECT OId, Name, Email FROM owner ORDER BY Name")
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add a Pet</title>
-    <link rel="stylesheet" href="../pages/style.css">
-    <h1 class="header">Pet Services</h1>  
+    <title>Add Pet</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="main-content">
     <h2>Add New Pet</h2>
+    <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>
+    <?php if ($success) { ?><p style="color:green"><?php echo $success; ?></p><?php } ?>
 
     <form method="POST">
         <p>Owner:
@@ -48,7 +48,7 @@ $owners = mysqli_query($con, "SELECT OId, Name, Email FROM owner ORDER BY Name")
                 <?php } ?>
             </select>
         </p>
-        <p>Pet's Name: <input type="text" name="Name" placeholder="" maxlength="50" required></p>
+        <p><input type="text" name="Name" placeholder="Pet name" maxlength="50" required></p>
         <p>Birthdate: <input type="date" name="Birthdate" required></p>
         <p>Species:
             <select name="Species" required>
@@ -65,26 +65,10 @@ $owners = mysqli_query($con, "SELECT OId, Name, Email FROM owner ORDER BY Name")
             <label><input type="radio" name="IsFixed" value="1" required> Yes</label>
             <label><input type="radio" name="IsFixed" value="0"> No</label>
         </p>
-        <p>Last Vet Appointment (optional): <input type="date" name="LastVetApp"></p>
-        <p>Vaccinated in the last year?<label><input type="checkbox" name="IsVaccinated"></label></p>
-
-        <div class="form-submit-button">
-            <button type="submit" name="action" value="Add Pet" class="">Add Pet</button>
-        </div>
+        <p>Last vet appointment (optional): <input type="date" name="LastVetApp"></p>
+        <p><label><input type="checkbox" name="IsVaccinated"> Vaccinated in the last year</label></p>
+        <input type="submit" value="Add Pet">
     </form>
-    
-    <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>
-    <?php if ($success) { ?><p style="color:green"><?php echo $success; ?></p><?php } ?>
-
-        <div class="button-container">
-            <form method="GET" action="newappointment.php" style="display:inline;">
-                <button type="submit" name="action" value="" class="login-menu-button">Schedule Appointment</button>
-            </form>
-
-            <form method="GET" action="empHome.php" style="display:inline;">
-                <button type="submit" name="action" value="appointments" class="login-menu-button">Back to Home</button>
-            </form>
-        </div>
-    </div>
+    <p><a href="newappointment.php">Schedule an appointment</a> | <a href="empHome.php">Back to home</a></p>
 </body>
 </html>

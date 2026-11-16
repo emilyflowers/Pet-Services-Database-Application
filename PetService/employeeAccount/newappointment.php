@@ -2,7 +2,9 @@
 session_start();
 if (!isset($_SESSION['Eid'])) { header("Location: login.php"); exit; }
 
-$con = mysqli_connect("localhost", "root", "", "petservices_db");
+require __DIR__ . '/../database/booking.php';
+
+$con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
 $error = '';
 $success = '';
 
@@ -14,17 +16,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $t = isset($_POST['Training']) ? 1 : 0;
     $start = $_POST['StartDate'];
     $end = $_POST['EndDate'];
+    $vet = vetStatus($con, $pid);
 
-    if (!$g && !$b && !$t) {
+    if (!$vet['ok']) {
+        $error = "This pet's last vet visit is over a year ago" . ($vet['last'] ? " (" . $vet['last'] . ")" : " (none on record)") . ". Update the pet's vet date first if a visit has happened.";
+    } elseif (!$g && !$b && !$t) {
         $error = "Please choose at least one service.";
     } elseif ($end < $start) {
         $error = "The end date can't be before the start date.";
+    } elseif ($fullDay = findFullDay($con, $start, $end)) {
+        $error = "Fully booked on " . date('F j, Y', strtotime($fullDay)) . " (" . MAX_PER_DAY . " appointments max per day).";
     } else {
         try {
             $stmt = mysqli_prepare($con, "INSERT INTO appointment (PId, EId, Grooming, Boarding, Training, StartDate, EndDate) VALUES (?, ?, ?, ?, ?, ?, ?)");
             mysqli_stmt_bind_param($stmt, "iiiiiss", $pid, $eid, $g, $b, $t, $start, $end);
             mysqli_stmt_execute($stmt);
-            $success = "Appointment scheduled.";
+            $total = calcTotal($g, $b, $t, $start, $end)['total'];
+            $success = "Appointment scheduled. Total: $" . number_format($total, 2) . ".";
         } catch (mysqli_sql_exception $e) {
             $error = "Could not schedule the appointment. Please check the details.";
         }
@@ -41,12 +49,12 @@ $employees = mysqli_query($con, "SELECT EId, Name FROM employee ORDER BY Name");
 <head>
     <meta charset="UTF-8">
     <title>Schedule Appointment</title>
-    <link rel="stylesheet" href="../pages/style.css">
-    <h1 class="header">Pet Services</h1>  
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="main-content">
     <h2>Schedule New Appointment</h2>
+    <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>
+    <?php if ($success) { ?><p style="color:green"><?php echo $success; ?></p><?php } ?>
 
     <form method="POST">
         <p>Pet:
@@ -67,75 +75,17 @@ $employees = mysqli_query($con, "SELECT EId, Name FROM employee ORDER BY Name");
             </select>
         </p>
         <p>Services:
-            <p><label><input type="checkbox" id="grooming" name="Grooming"> Grooming</label></p>
-            <p><label><input type="checkbox" id="boarding" name="Boarding"> Boarding</label></p>
-            <p><label><input type="checkbox" id="training" name="Training"> Training</label></p>
+            <label><input type="checkbox" name="Grooming"> Grooming</label>
+            <label><input type="checkbox" name="Boarding"> Boarding</label>
+            <label><input type="checkbox" name="Training"> Training</label>
         </p>
         <p>
-            <p><label>Start Date: <input type="date" id="start-date" name="StartDate" required></label></p>
-            <p><label>End Date: <input type="date" id="end-date" name="EndDate" required></label></p>
+            <label>Start: <input type="date" name="StartDate" required></label>
+            <label>End: <input type="date" name="EndDate" required></label>
         </p>
-        
-        <div class="form-submit-button">
-            <button type="submit" name="action" value="Schedule" class="">Schedule Appointment</button>
-        </div>
+        <?php echo priceBox(); ?>
+        <input type="submit" value="Schedule">
     </form>
-    <label id="cost-per-day">Cost Per Day: $0</label>
-    <label id="total-cost">Input start and end dates for total price</label>
-
-    <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>
-    <?php if ($success) { ?><p style="color:green"><?php echo $success; ?></p><?php } ?>
-
-        <div class="button-container">
-            <form method="GET" action="empHome.php?action=appointments" style="display:inline;">
-                <button type="submit" name="action" value="appointments" class="login-menu-button">View Appointments</button>
-            </form>
-
-            <form method="GET" action="empHome.php?action=appointments" style="display:inline;">
-                <button type="submit" name="action" value="appointments" class="login-menu-button">Back to Home</button>
-            </form>
-        </div>
-    </div>
+    <p><a href="empHome.php?action=appointments">View appointments</a> | <a href="empHome.php">Back to home</a></p>
 </body>
-<script>
-const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-
-checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', updateLabel);
-});
-const dates = document.querySelectorAll('input[type="date"]');
-
-dates.forEach(date => {
-    date.addEventListener('change', updateLabel);
-});
-
-function updateLabel() {
-    let costPerDay = 0;
-
-    if (document.getElementById("grooming").checked) costPerDay += 50;
-    if (document.getElementById("boarding").checked) costPerDay += 65;
-    if (document.getElementById("training").checked) costPerDay += 45;
-
-    document.getElementById("cost-per-day").textContent = "Cost Per Day: $" + costPerDay;
-
-    if (!document.getElementById("start-date").value ||
-    !document.getElementById("end-date").value) {
-    	document.getElementById("total-cost").textContent = "Input start and end dates for total price";
-    } else {
-
-    	const start = new Date(document.getElementById("start-date").value);
-    	const end = new Date(document.getElementById("end-date").value);
-
-    	if (end < start) {
-    		document.getElementById("total-cost").textContent = "Invalid date range";
-    	} else {
-
-    		const difference = end - start;
-    		const days = difference / (1000 * 60 * 60 * 24) + 1;
-
-    		document.getElementById("total-cost").textContent = "Total Cost: $" + costPerDay * days;
-	}
-    }
-}
-</script>
 </html>

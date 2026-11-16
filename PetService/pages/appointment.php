@@ -9,7 +9,9 @@ if (empty($_SESSION['PId'])) {
     exit;
 }
 
-$con = mysqli_connect("localhost", "root", "", "petservices_db");
+require __DIR__ . '/../database/booking.php';
+
+$con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
 $oid = (int)$_SESSION['OId'];
 $pid = (int)$_SESSION['PId'];
 
@@ -20,6 +22,7 @@ if (!$pet) {
     exit;
 }
 
+$vet = vetStatus($con, $pid);
 $error = '';
 $success = '';
 
@@ -30,7 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $start = $_POST['StartDate'] ?? '';
     $end = $_POST['EndDate'] ?? '';
 
-    if (!$g && !$b && !$t) {
+    if (!$vet['ok']) {
+        $error = "Appointments can't be booked until " . htmlspecialchars($pet['Name']) . " has had a vet visit within the past year.";
+    } elseif (!$g && !$b && !$t) {
         $error = "Please choose at least one service.";
     } elseif ($start === '' || $end === '') {
         $error = "Please choose a start and end date.";
@@ -38,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "The end date can't be before the start date.";
     } elseif ($start < date('Y-m-d')) {
         $error = "The start date can't be in the past.";
+    } elseif ($fullDay = findFullDay($con, $start, $end)) {
+        $error = "Sorry, we're fully booked on " . date('F j, Y', strtotime($fullDay)) . ". Please choose different dates.";
     } else {
         // Assign a random employee
         $emp = mysqli_fetch_assoc(mysqli_query($con, "SELECT EId FROM employee ORDER BY RAND() LIMIT 1"));
@@ -47,7 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_bind_param($stmt, "iiiiiss", $pid, $eid, $g, $b, $t, $start, $end);
 
         if (mysqli_stmt_execute($stmt)) {
-            $success = "Appointment booked for " . htmlspecialchars($pet['Name']) . "!";
+            $total = calcTotal($g, $b, $t, $start, $end)['total'];
+            $success = "Appointment booked for " . htmlspecialchars($pet['Name']) . "! Your total is $" . number_format($total, 2) . ".";
         } else {
             $error = "Could not book the appointment. Please try again.";
         }
@@ -59,80 +67,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../pages/style.css"> 
-    <h1 class="header">Schedule Appointment</h1>  
-    <title>Schedule Appointment</title>
+    <title>Make Appointment</title>
 </head>
 <body>
-    <div class="main-content">
     <h2>Appointment for <?php echo htmlspecialchars($pet['Name']); ?></h2>
 
-    
+    <?php if (!$vet['ok']) { ?>
+        <p style="color:red">
+            <?php echo htmlspecialchars($pet['Name']); ?> needs a vet visit within the past year before an appointment can be booked.
+            <?php echo $vet['last'] ? "Last recorded vet visit: " . htmlspecialchars($vet['last']) . "." : "No vet visit is on record."; ?>
+            Once the visit is done, ask our staff to update your pet's record.
+        </p>
+    <?php } ?>
+
+    <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>
+    <?php if ($success) { ?><p style="color:green"><?php echo $success; ?></p><?php } ?>
 
     <form method="POST">
-        <h3>Services:</h3>
-        <label><input type="checkbox" id="grooming" name="Grooming"> Grooming</label><br>
-        <label><input type="checkbox" id="boarding" name="Boarding"> Boarding</label><br>
-        <label><input type="checkbox" id="training" name="Training"> Training</label><br><br>
-
-        <label>Start date: <input type="date" id="start-date" name="StartDate" min="<?php echo date('Y-m-d'); ?>" required></label><br><br>
-        <label>End date: <input type="date" id="end-date" name="EndDate" min="<?php echo date('Y-m-d'); ?>" required></label><br><br>
-       
-        <div class="form-submit-button">
-           <button type="submit" name="action" value="bookappt" class="">Book Appointment</button>   
-        </div>
-        
-        <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>
-        <?php if ($success) { ?><p style="color:green"><?php echo $success; ?></p><?php } ?>
+        <p>Services:</p>
+        <label><input type="checkbox" name="Grooming"> Grooming</label>
+        <label><input type="checkbox" name="Boarding"> Boarding</label>
+        <label><input type="checkbox" name="Training"> Training</label>
+        <p>
+            <label>Start date: <input type="date" name="StartDate" min="<?php echo date('Y-m-d'); ?>" required></label>
+            <label>End date: <input type="date" name="EndDate" min="<?php echo date('Y-m-d'); ?>" required></label>
+        </p>
+        <?php echo priceBox(); ?>
+        <input type="submit" value="Book Appointment" <?php if (!$vet['ok']) echo 'disabled'; ?>>
     </form>
-    <label id="cost-per-day">Cost Per Day: $0</label>
-    <label id="total-cost">Input start and end dates for total price</label>
-    <div class="button-container">
-        <form method="GET" action="../userAccount/ownerHome.php" style="display:inline;">
-                <button type="submit" name="action" value="home" class="login-menu-button">Return to Home</button>
-        </form>
-    </div>
- </div>
+
+    <p><a href="../userAccount/ownerHome.php">Back to home</a></p>
 </body>
-<script>
-const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-
-checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', updateLabel);
-});
-const dates = document.querySelectorAll('input[type="date"]');
-
-dates.forEach(date => {
-    date.addEventListener('change', updateLabel);
-});
-
-function updateLabel() {
-    let costPerDay = 0;
-
-    if (document.getElementById("grooming").checked) costPerDay += 50;
-    if (document.getElementById("boarding").checked) costPerDay += 65;
-    if (document.getElementById("training").checked) costPerDay += 45;
-
-    document.getElementById("cost-per-day").textContent = "Cost Per Day: $" + costPerDay;
-
-    if (!document.getElementById("start-date").value ||
-    !document.getElementById("end-date").value) {
-    	document.getElementById("total-cost").textContent = "Input start and end dates for total price";
-    } else {
-
-    	const start = new Date(document.getElementById("start-date").value);
-    	const end = new Date(document.getElementById("end-date").value);
-
-    	if (end < start) {
-    		document.getElementById("total-cost").textContent = "Invalid date range";
-    	} else {
-
-    		const difference = end - start;
-    		const days = difference / (1000 * 60 * 60 * 24) + 1;
-
-    		document.getElementById("total-cost").textContent = "Total Cost: $" + costPerDay * days;
-	}
-    }
-}
-</script>
 </html>

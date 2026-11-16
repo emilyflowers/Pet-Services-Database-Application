@@ -3,7 +3,7 @@ session_start();
 if (!isset($_SESSION['Eid'])) { header("Location: login.php"); exit; }
 $isAdmin = ($_SESSION['IsAdmin'] ?? 0) == 1;
 
-$con = mysqli_connect("localhost", "root", "", "petservices_db");
+$con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
 $id = (int)($_GET['OId'] ?? 0);
 $error = '';
 
@@ -29,14 +29,8 @@ if (!$data) { die("Pet parent not found."); }
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Pet Parent</title>
-    <link rel="stylesheet" href="../pages/style.css">
-    <h1 class="header">Pet Services</h1>  
-</head>
+<head><meta charset="UTF-8"><title>Edit Pet Parent</title></head>
 <body>
-<div class="main-content">
 <h3>Update Pet Parent #<?php echo $id; ?></h3>
 <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>
 <form method="POST">
@@ -45,16 +39,10 @@ if (!$data) { die("Pet parent not found."); }
     <p>Phone: <input type="tel" name="PhoneNumber" value="<?php echo htmlspecialchars($data['PhoneNumber']); ?>" maxlength="15" required></p>
     <p>Address: <input type="text" name="Address" value="<?php echo htmlspecialchars($data['Address']); ?>" required></p>
     <?php if ($isAdmin) { ?>
-        <p>New password: <input type="text" name="Password" placeholder="(Leave blank to keep current)"></p>
+        <p>New password: <input type="text" name="Password" placeholder="Leave blank to keep current"></p>
     <?php } ?>
-
-    <div class="form-submit-button">
-        <button type="submit" name="update" value="Update" class="">Update Pet Parent</button>
-    </div>
-    <div class="return-option">
-        <a href="empHome.php?action=owners">Cancel Changes</a>
-    </div>
+    <input type="submit" name="update" value="Update">
+    <a href="empHome.php?action=owners">Cancel</a>
 </form>
-</div>
 </body>
 </html>

@@ -3,7 +3,7 @@ session_start();
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $con = mysqli_connect("localhost", "root", "", "petservices_db");
+    $con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
     $stmt = mysqli_prepare($con, "SELECT OId, Password FROM owner WHERE Email = ?");
     mysqli_stmt_bind_param($stmt, "s", $_POST['Email']);
     mysqli_stmt_execute($stmt);
@@ -22,13 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Pet Parent</title>
-    <link rel="stylesheet" href="../pages/style.css"> 
-    <h1 class="header">Pet Services</h1>  
+    <title>Login</title>
 </head>
 <body>
-    <div class="main-content">
-        <h1>Login</h1>
+    <div class="container">
+        <div class="title">Login</div>
         <div class="content">
             <p style="color:red"><?php echo $error; ?></p>
             <form action="" method="POST">
@@ -42,13 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="password" placeholder="Enter your password" id="Password" name="Password" required>
                     </div>
                 </div>
-              
-                <div class="button-container">
-                    <button type="submit" name="action" value="login" class="login-menu-button">Login</button>   
+                <div class="button">
+                    <input type="submit" value="Login">
                 </div>
-
-                <p class="return-option"><strong>Need to create an account?</strong> <a href="register.php">Register</a></p>
-
+                <p class="x"><strong>Did not register?</strong> <a href="register.php">Register</a></p>
             </form>
         </div>
     </div>

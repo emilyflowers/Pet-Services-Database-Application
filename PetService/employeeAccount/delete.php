@@ -2,7 +2,7 @@
 session_start();
 if (($_SESSION['IsAdmin'] ?? 0) != 1) { header("Location: login.php"); exit; }
 
-$con = mysqli_connect("localhost", "root", "", "petservices_db");
+$con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
 $type = $_GET['type'] ?? '';
 $id = (int)($_GET['id'] ?? 0);
 $back = "empHome.php";

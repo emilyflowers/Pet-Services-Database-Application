@@ -5,7 +5,7 @@ if (empty($_SESSION['OId'])) {
     exit;
 }
 
-$con = mysqli_connect("localhost", "root", "", "petservices_db");
+$con = mysqli_connect("localhost", "Markward", "Jacob!2", "petservices_db");
 $oid = (int)$_SESSION['OId'];
 $error = '';
 $success = '';
@@ -47,12 +47,11 @@ $count = mysqli_num_rows($appts);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leave a Review</title>
-    <link rel="stylesheet" href="style.css"> 
-    <h1 class="header">Pet Services</h1>  
 </head>
 <body>
-<div class="main-content">
     <h2>Leave a Review</h2>
+    <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>
+    <?php if ($success) { ?><p style="color:green"><?php echo $success; ?></p><?php } ?>
 
     <?php if ($count === 0) { ?>
         <p>You have no completed appointments waiting for a review.</p>
@@ -77,21 +76,9 @@ $count = mysqli_num_rows($appts);
                 </select>
             </p>
             <p><textarea name="Body" rows="5" cols="50" placeholder="Tell us about your experience (optional)"></textarea></p>
-            <div class="form-submit-button">
-                <button type="submit" name="action" value="Submit Review" class="">Submit Review</button>
-            </div>
+            <input type="submit" value="Submit Review">
         </form>
     <?php } ?>
-
-    <?php if ($error) { ?><p style="color:red"><?php echo $error; ?></p><?php } ?>
-    <?php if ($success) { ?><p style="color:green"><?php echo $success; ?></p><?php } ?>
-
-     <div class="button-container">
-     <form method="GET" action="../userAccount/ownerHome.php" style="display:inline;">
-                <button type="submit" name="action" value="return" class="login-menu-button">Return to Home</button>
-            </form>
-      
-     </div>
-    </div>
+    <p><a href="../userAccount/ownerHome.php">Back to home</a></p>
 </body>
 </html>
