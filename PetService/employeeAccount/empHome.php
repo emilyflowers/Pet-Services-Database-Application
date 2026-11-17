@@ -44,7 +44,16 @@
 
 <?php if ($action === 'appointments') {
     $search = trim($_GET['search'] ?? '');
-    $sql = "SELECT a.AId, p.Name AS Pet, o.Name AS Owner, e.Name AS Employee, a.Grooming, a.Boarding, a.Training, DATE(a.StartDate) AS StartDate, DATE(a.EndDate) AS EndDate
+    $showPast = isset($_GET['show_past']);
+
+    $sql = "SELECT a.AId, p.Name AS Pet, o.Name AS Owner, e.Name AS Employee,
+                   a.Grooming, a.Boarding, a.Training,
+                   DATE(a.StartDate) AS StartDate, DATE(a.EndDate) AS EndDate,
+                   CASE
+                       WHEN DATE(a.StartDate) <= CURDATE() AND COALESCE(DATE(a.EndDate), DATE(a.StartDate)) >= CURDATE() THEN 'current'
+                       WHEN DATE(a.StartDate) > CURDATE() THEN 'upcoming'
+                       ELSE 'past'
+                   END AS Status
             FROM appointment a
             INNER JOIN pet p ON a.PId = p.PId
             INNER JOIN owner o ON p.OId = o.OId
@@ -53,7 +62,7 @@
     if ($search !== '') {
         $sql .= " WHERE p.Name LIKE ? OR o.Name LIKE ? OR e.Name LIKE ?";
     }
-    $sql .= " ORDER BY a.StartDate DESC";
+    $sql .= " ORDER BY a.StartDate ASC";
 
     $stmt = mysqli_prepare($con, $sql);
     if ($search !== '') {
@@ -62,34 +71,80 @@
     }
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
+
+    $current = [];
+    $upcoming = [];
+    $past = [];
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        if ($row['Status'] === 'current') {
+            $current[] = $row;
+        } elseif ($row['Status'] === 'upcoming') {
+            $upcoming[] = $row;
+        } else {
+            $past[] = $row;
+        }
+    }
+
+    // Show most recent past appointments first
+    $past = array_reverse($past);
+
+    if (!function_exists('renderAppointmentTable')) {
+        function renderAppointmentTable($appointments, $isAdmin, $emptyMessage) { ?>
+            <table border="1">
+                <tr>
+                    <th>Pet</th><th>Owner</th><th>Employee</th>
+                    <th>Grooming</th><th>Boarding</th><th>Training</th>
+                    <th>Start</th><th>End</th><th>Actions</th>
+                </tr>
+                <?php if (empty($appointments)) { ?>
+                    <tr><td colspan="9"><?php echo e($emptyMessage); ?></td></tr>
+                <?php } else { ?>
+                    <?php foreach ($appointments as $d) { ?>
+                    <tr>
+                        <td><?php echo e($d['Pet']); ?></td>
+                        <td><?php echo e($d['Owner']); ?></td>
+                        <td><?php echo e($d['Employee']); ?></td>
+                        <td><?php echo yn($d['Grooming']); ?></td>
+                        <td><?php echo yn($d['Boarding']); ?></td>
+                        <td><?php echo yn($d['Training']); ?></td>
+                        <td><?php echo e($d['StartDate']); ?></td>
+                        <td><?php echo e($d['EndDate']); ?></td>
+                        <td>
+                            <a href="edit.php?AId=<?php echo $d['AId']; ?>">Edit</a>
+                            <?php if ($isAdmin) { ?> | <a href="delete.php?type=appointment&id=<?php echo $d['AId']; ?>" onclick="return confirm('Delete this appointment and its review?')">Delete</a><?php } ?>
+                        </td>
+                    </tr>
+                    <?php } ?>
+                <?php } ?>
+            </table>
+        <?php }
+    }
 ?>
     <h2>Appointments</h2>
     <form method="GET" action="empHome.php" style="margin-bottom: 12px;">
         <input type="hidden" name="action" value="appointments">
         <input type="text" name="search" placeholder="Search by pet, owner, or employee" value="<?php echo e($search); ?>">
         <button type="submit" class="search-button">Search</button>
+        <label style="margin-left: 10px;">
+            <input type="checkbox" name="show_past" value="1" onchange="this.form.submit()" <?php if ($showPast) echo 'checked'; ?>>
+            Show Past Appointments?
+        </label>
         <?php if ($search !== '') { ?>
-            <a href="empHome.php?action=appointments">Clear</a>
+            <a href="empHome.php?action=appointments<?php echo $showPast ? '&show_past=1' : ''; ?>" style="margin-left: 8px;">Clear</a>
         <?php } ?>
     </form>
 
-    <table border="1">
-        <tr><th>Pet</th><th>Owner</th><th>Employee</th><th>Grooming</th><th>Boarding</th><th>Training</th><th>Start</th><th>End</th><th>Actions</th></tr>
-        <?php if (mysqli_num_rows($result) === 0) { ?>
-            <tr><td colspan="8">No matching appointments found.</td></tr>
-        <?php } ?>
-        <?php while ($d = mysqli_fetch_assoc($result)) { ?>
-        <tr>
-            <td><?php echo e($d['Pet']); ?></td><td><?php echo e($d['Owner']); ?></td><td><?php echo e($d['Employee']); ?></td>
-            <td><?php echo yn($d['Grooming']); ?></td><td><?php echo yn($d['Boarding']); ?></td><td><?php echo yn($d['Training']); ?></td>
-            <td><?php echo e($d['StartDate']); ?></td><td><?php echo e($d['EndDate']); ?></td>
-            <td>
-                <a href="edit.php?AId=<?php echo $d['AId']; ?>">Edit</a>
-                <?php if ($isAdmin) { ?> | <a href="delete.php?type=appointment&id=<?php echo $d['AId']; ?>" onclick="return confirm('Delete this appointment and its review?')">Delete</a><?php } ?>
-            </td>
-        </tr>
-        <?php } ?>
-    </table>
+    <h3>Current Appointments</h3>
+    <?php renderAppointmentTable($current, $isAdmin, 'No current appointments found.'); ?>
+
+    <h3>Upcoming Appointments</h3>
+    <?php renderAppointmentTable($upcoming, $isAdmin, 'No upcoming appointments found.'); ?>
+
+    <?php if ($showPast) { ?>
+        <h3>Past Appointments</h3>
+        <?php renderAppointmentTable($past, $isAdmin, 'No past appointments found.'); ?>
+    <?php } ?>
 <?php } ?>
 
 <?php if ($action === 'pets') {
