@@ -84,10 +84,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <option value="">-- Select --</option>
                             <option value="Dog">Dog</option>
                             <option value="Cat">Cat</option>
-                            <option value="Bird">Bird</option>
-                            <option value="Rabbit">Rabbit</option>
-                            <option value="Reptile">Reptile</option>
-                            <option value="Other">Other</option>
                         </select>
                     </div>
 
