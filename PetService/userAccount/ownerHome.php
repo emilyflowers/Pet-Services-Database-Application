@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class='pets'>
     <h2>Your Pets</h2>
     <?php if (empty($pets)) { ?>
-        <p>No pets registered yet.</p>
+        <p class="owner-book-appt">No pets registered yet.</p>
     <?php } else { ?>
         <table border="1" cellpadding="8" cellspacing="0">
             <thead>
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class='book-appointment'>
     <h2>Book an Appointment</h2>
     <?php if (count($pets) === 0) { ?>
-        <p>You have no pets registered yet.</p>
+        <p class="owner-book-appt">You have no pets registered yet.</p>
     <?php } else { ?>
         <form method="POST" class="owner-book-appt">
             <label>Which pet is this for?
@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class='appointments'>
     <h2>Upcoming Appointments</h2>
     <?php if (empty($upcomingAppointments)) { ?>
-        <p>No upcoming appointments scheduled.</p>
+        <p class="owner-book-appt">No upcoming appointments scheduled.</p>
     <?php } else { ?>
         <table border="1" cellpadding="8" cellspacing="0">
             <thead>
@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <h2>Past Appointments</h2>
     <?php if (empty($pastAppointments)) { ?>
-        <p>No past appointments found.</p>
+        <p class="owner-book-appt">No past appointments found.</p>
     <?php } else { ?>
         <table border="1" cellpadding="8" cellspacing="0">
             <thead>
